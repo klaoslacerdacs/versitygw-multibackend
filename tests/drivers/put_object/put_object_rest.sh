@@ -65,12 +65,17 @@ send_openssl_go_command_chunked_no_content_length() {
     assert_success
 }
 
-put_bucket_object_run_test() {
-  if ! check_param_count_gt "bucket, key, function, params" 3 $#; then
+put_bucket_object_run_command() {
+  if ! check_param_count_gt "bucket, key, expected success val, params" 3 $#; then
     return 1
   fi
   if ! setup_bucket_and_add_file "$1" "$2"; then
     log 2 "error setting up bucket and adding file"
     return 1
   fi
+  if ! send_rest_go_command "$3" "-bucketName" "$1" "-objectKey" "$2" "${@:4}"; then
+    log 2 "error sending go command"
+    return 1
+  fi
+  return 0
 }

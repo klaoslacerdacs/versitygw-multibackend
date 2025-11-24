@@ -14,6 +14,19 @@
 # specific language governing permissions and limitations
 # under the License.
 
-@test "REST - PutObjectTagging - no content-md5" {
+load ./bats-support/load
+load ./bats-assert/load
 
+source ./tests/drivers/create_bucket/create_bucket_rest.sh
+source ./tests/setup.sh
+
+@test "REST - PutObjectTagging - content-md5 not required for object tagging" {
+  test_file="test_file"
+
+  run get_bucket_name "$BUCKET_ONE_NAME"
+  assert_success
+  bucket_name="$output"
+
+  run put_bucket_object_run_command "$bucket_name" "$test_file" "200" "-commandType" "putObjectTagging" "-tagKey" "key" "-tagValue" "value"
+  assert_success
 }
